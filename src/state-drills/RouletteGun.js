@@ -2,12 +2,13 @@ import React, { Component } from 'react'
 
 export default class RouletteGun extends Component {
   static defaultProps = {
-    bulletInChamber: 8
+    catLives: 9
   };
 
   state = {
     chamber: null,
     spinningTheChamber: false,
+    catLives: this.props.catLives
   };
 
   componentWillUnmount() {
@@ -19,7 +20,14 @@ export default class RouletteGun extends Component {
       spinningTheChamber: true,
     })
     this.timeout = setTimeout(() => {
-      const randomChamber = Math.ceil(Math.random() * 8)
+      const randomChamber = Math.ceil(Math.random() * 2)
+
+      if(randomChamber === 2) {
+        let livesleft = this.state.catLives;
+        this.setState({
+          catLives: livesleft - 1
+        })
+      }
 
       this.setState({
         chamber: randomChamber,
@@ -29,14 +37,21 @@ export default class RouletteGun extends Component {
   }
 
   renderDisplay() {
-    const { chamber, spinningTheChamber } = this.state
-    const { bulletInChamber } = this.props
+    const { chamber, spinningTheChamber,catLives } = this.state
+    // const { catLives } = this.props
     if (spinningTheChamber) {
-      return 'spinning the chamber and pulling the trigger! ...'
-    } else if (chamber === bulletInChamber) {
-      return 'BANG!!!!!'
+      return 'Cat is currently falling!! ....'
+    } else if (chamber === 1 ) {
+      return `Landed on feet! Kitty still has ${this.state.catLives} lives`;
+    } else if (chamber === 2) {
+      // need to subtract 1 from the catlives and assigne it to the state;
+      // let livesleft = catLives - 1;
+      // this.setState({
+      //   catLives: livesleft
+      // })
+      return `Uh oh, used up a life! Kitty has ${this.state.catLives} lives left.`;
     } else {
-      return 'you\'re safe!'
+      return `Click to decide kitty's fate!`;
     }
   }
 
@@ -45,7 +60,7 @@ export default class RouletteGun extends Component {
       <div className='RouletteGun'>
         <p>{this.renderDisplay()}</p>
         <button onClick={this.handleClick}>
-          Pull the trigger!
+          Kitty had an accident!
         </button>
       </div>
     )
